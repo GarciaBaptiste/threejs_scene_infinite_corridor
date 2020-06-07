@@ -13,16 +13,16 @@ let forwardSpeed = 0,
   straffeSpeed = 0;
 
 var MODELS = [
-  { name: "scene_test_repeat" }
+  { name: "scene_corridor" }
 ];
 
 var UNITS = [{
-  modelName: "scene_test_repeat",
+  modelName: "scene_corridor",
   meshName: "Plane",
   position: { x: 0, y: 0, z: 0 },
   scale: 1
 }, {
-  modelName: "scene_test_repeat",
+  modelName: "scene_corridor",
   meshName: "Plane",
   position: { x: 0, y: 0, z: 20 },
   scale: 1
