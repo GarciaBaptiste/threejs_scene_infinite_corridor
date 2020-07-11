@@ -33,3 +33,19 @@ canvas {
   left: 0;
   z-index: 0;
 }
+
+#log-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  background: rgba(255,255,255,0.5);
+  color: black;
+  pointer-events: none;
+  width: 100vw;
+}
+
+#log {
+  position: relative;
+  margin: 8px;
+}

@@ -4,6 +4,7 @@ window.addEventListener('mousemove', mouseMoved);
 window.addEventListener('keydown', keyDowned);
 window.addEventListener('keyup', keyUpped);
 
+var log;
 var worldScene = null;
 var renderer = null;
 var camera = null;
@@ -31,6 +32,7 @@ var UNITS = [{
 var numLoadedModels = 0;
 
 function setup() {
+  log = document.getElementById('log');
   initScene();
   initRenderer();
   loadModels();
@@ -140,6 +142,7 @@ function setupFloor(offset) {
 }
 
 function animate() {
+  log.innerText = camera.position.z;
   requestAnimationFrame(animate);
   moveCamera();
   var mixerUpdateDelta = clock.getDelta();
@@ -201,8 +204,8 @@ function onWindowResize() {
 }
 
 function mouseMoved(evt) {
-  camera.rotation.y -= evt.movementX / 100;
-  let nextCameraRotationX = camera.rotation.x - evt.movementY / 100;
+  camera.rotation.y -= evt.movementX / 1000;
+  let nextCameraRotationX = camera.rotation.x - evt.movementY / 1000;
   if (nextCameraRotationX <= 1.7 && nextCameraRotationX >= -1.7) {
     camera.rotation.x = nextCameraRotationX;
   }
@@ -210,9 +213,9 @@ function mouseMoved(evt) {
 
 function keyDowned(evt) {
   if (evt.key === "z") {
-    forwardSpeed = .1;
+    forwardSpeed = .15;
   } else if (evt.key === "s") {
-    forwardSpeed = -.1;
+    forwardSpeed = -.15;
   } else if (evt.key === "q") {
     straffeSpeed = -.075;
   } else if (evt.key === "d") {
