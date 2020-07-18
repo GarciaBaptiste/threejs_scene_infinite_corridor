@@ -10,7 +10,7 @@ function init() {
   context.addEventListener('click', lockMouse);
   lockMouse();
   setScene();
-  renderObjects("scene_corridor");
+  renderObjects("test_mapping");
   window.addEventListener('resize', windowResized);
   window.addEventListener('mousemove', mouseMoved);
   window.addEventListener('keydown', keyDowned);
@@ -29,8 +29,11 @@ function setScene() {
   camera.rotation.y = .2;
   camera.rotation.x = .2;
 
-  hlight = new THREE.AmbientLight(0xffffff, .75);
+  hlight = new THREE.AmbientLight(0xffffff, .5);
   scene.add(hlight);
+
+  var pointLight = new THREE.PointLight(0xffffff, .1);
+  scene.add(pointLight);
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.shadowMap.enabled = true;
@@ -84,8 +87,8 @@ function windowResized() {
 }
 
 function mouseMoved(evt) {
-  camera.rotation.y -= evt.movementX / 100;
-  let nextCameraRotationX = camera.rotation.x - evt.movementY / 100;
+  camera.rotation.y -= evt.movementX / 500;
+  let nextCameraRotationX = camera.rotation.x - evt.movementY / 500;
   if (nextCameraRotationX <= 1.7 && nextCameraRotationX >= -1.7) {
     camera.rotation.x = nextCameraRotationX;
   }
