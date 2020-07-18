@@ -13,9 +13,9 @@ let forwardSpeed = 0,
   straffeSpeed = 0;
 
 let MODELS = [
-  { name: "lod_test/high" },
-  { name: "lod_test/medium" },
-  { name: "lod_test/low" },
+  { name: "lod_concrete_cube/concrete_cube_high" },
+  { name: "lod_concrete_cube/concrete_cube_medium" },
+  { name: "lod_concrete_cube/concrete_cube_low" },
 ];
 
 let numLoadedModels = 0;
@@ -55,9 +55,9 @@ function loadGltfModel(model, onLoaded) {
           object.receiveShadow = true;
         } else if (object.isLight) {
           object.castShadow = true;
-          object.shadow.mapSize.width = 512;
-          object.shadow.mapSize.height = 512;
-          object.shadow.camera.near = 0.5;
+          object.shadow.mapSize.width = 1024;
+          object.shadow.mapSize.height = 1024;
+          object.shadow.camera.near = 0.1;
           object.shadow.camera.far = 500;
           object.shadow.bias = -0.005;
         }
@@ -126,15 +126,26 @@ function initScene() {
   light.shadow.radius = 1;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 function setupScene() {
   let lod = new THREE.LOD();
   for (let i = 0; i < 3; i++) {
     const mesh = MODELS[i].scene;
-    lod.addLevel(mesh, i * 50);
+    lod.addLevel(mesh, Math.pow(i, 2) * 15);
   }
-  worldScene.add(lod);
+  for (let j = 0; j < 10; j++) {
+    for (let i = 0; i < 3; i++) {
+      let lodClone = lod.clone();
+      lodClone.position.y = i * 2;
+      lodClone.position.x = j * 2;
+      worldScene.add(lodClone);
+    }
+  }
   animate();
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
