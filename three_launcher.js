@@ -1,35 +1,39 @@
-window.addEventListener('load', setup);
-window.addEventListener('resize', onWindowResize, false);
-window.addEventListener('mousemove', mouseMoved);
-window.addEventListener('keydown', keyDowned);
-window.addEventListener('keyup', keyUpped);
+window.addEventListener("load", setup);
+window.addEventListener("resize", onWindowResize, false);
+window.addEventListener("mousemove", mouseMoved);
+window.addEventListener("keydown", keyDowned);
+window.addEventListener("keyup", keyUpped);
 
-var log;
-var worldScene = null;
-var renderer = null;
-var camera = null;
-var clock = null;
+let log;
+let worldScene = null;
+let renderer = null;
+let camera = null;
+let clock = null;
 let forwardSpeed = 0,
   straffeSpeed = 0;
 
-var MODELS = ["test_material2"];
+let MODELS = [
+  { name: "lod_test/high" },
+  { name: "lod_test/medium" },
+  { name: "lod_test/low" },
+];
 
-var numLoadedModels = 0;
+let numLoadedModels = 0;
 
 function setup() {
-  log = document.getElementById('log');
+  log = document.getElementById("log");
   initScene();
   initRenderer();
   loadModels();
 }
 
 function loadModels() {
-  for (var i = 0; i < MODELS.length; ++i) {
-    var m = MODELS[i];
+  for (let i = 0; i < MODELS.length; ++i) {
+    const m = MODELS[i];
     loadGltfModel(m, function () {
       ++numLoadedModels;
       if (numLoadedModels === MODELS.length) {
-        document.getElementById('loader').style.display = "none";
+        document.getElementById("loader").style.display = "none";
         setupScene();
       }
     });
@@ -37,30 +41,34 @@ function loadModels() {
 }
 
 function loadGltfModel(model, onLoaded) {
-  var loader = new THREE.GLTFLoader();
-  var modelName = "models/" + model + ".gltf";
-  loader.load(modelName, function (gltf) {
-    var scene = gltf.scene;
-    model.scene = scene;
+  let loader = new THREE.GLTFLoader();
+  const modelName = "models/" + model.name + ".gltf";
+  loader.load(
+    modelName,
+    function (gltf) {
+      let scene = gltf.scene;
+      model.scene = scene;
 
-    gltf.scene.traverse(function (object) {
-      if (object.isMesh) {
-        object.castShadow = true;
-        object.receiveShadow = true;
-      } else if (object.isLight) {
-        object.castShadow = true;
-        object.shadow.mapSize.width = 512;
-        object.shadow.mapSize.height = 512;
-        object.shadow.camera.near = 0.5;
-        object.shadow.camera.far = 500;
-        object.shadow.bias = -0.005;
-      }
-    });
-    onLoaded();
-  },
+      gltf.scene.traverse(function (object) {
+        if (object.isMesh) {
+          object.castShadow = true;
+          object.receiveShadow = true;
+        } else if (object.isLight) {
+          object.castShadow = true;
+          object.shadow.mapSize.width = 512;
+          object.shadow.mapSize.height = 512;
+          object.shadow.camera.near = 0.5;
+          object.shadow.camera.far = 500;
+          object.shadow.bias = -0.005;
+        }
+      });
+      onLoaded();
+    },
     function (xhr) {
-      document.getElementById('loader').innerText = "Loading model " + Math.round(xhr.loaded / xhr.total * 100) + "%";
-    });
+      document.getElementById("loader").innerText =
+        "Loading model " + Math.round((xhr.loaded / xhr.total) * 100) + "%";
+    }
+  );
 }
 
 function animate() {
@@ -71,7 +79,7 @@ function animate() {
 }
 
 function initRenderer() {
-  var container = document.getElementById('context');
+  let container = document.getElementById("context");
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -80,17 +88,22 @@ function initRenderer() {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
   lockMouse();
-  container.addEventListener('click', lockMouse);
+  container.addEventListener("click", lockMouse);
 }
 
 function initScene() {
-  camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, .1, 5000);
+  camera = new THREE.PerspectiveCamera(
+    40,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    5000
+  );
   camera.rotation.order = "YXZ";
   camera.position.x = -1.5;
   camera.position.y = 1.7;
   camera.position.z = 1.5;
-  camera.rotation.y = .2;
-  camera.rotation.x = .2;
+  camera.rotation.y = 0.2;
+  camera.rotation.x = 0.2;
 
   clock = new THREE.Clock();
 
@@ -98,10 +111,10 @@ function initScene() {
   worldScene.background = new THREE.Color(000000);
   // worldScene.fog = new THREE.Fog(000000, 10, 22);
 
-  var hlight = new THREE.AmbientLight(0xffffff, 0.05);
+  const hlight = new THREE.AmbientLight(0xffffff, 0.05);
   worldScene.add(hlight);
 
-  var light = new THREE.PointLight(0xffffff, .25, 0, 2);
+  let light = new THREE.PointLight(0xffffff, 0.25, 0, 2);
   light.position.set(5, 4, 8);
   worldScene.add(light);
   light.castShadow = true;
@@ -114,6 +127,12 @@ function initScene() {
 }
 
 function setupScene() {
+  let lod = new THREE.LOD();
+  for (let i = 0; i < 3; i++) {
+    const mesh = MODELS[i].scene;
+    lod.addLevel(mesh, i * 50);
+  }
+  worldScene.add(lod);
   animate();
 }
 
@@ -133,13 +152,13 @@ function mouseMoved(evt) {
 
 function keyDowned(evt) {
   if (evt.key === "z") {
-    forwardSpeed = .15;
+    forwardSpeed = 0.15;
   } else if (evt.key === "s") {
-    forwardSpeed = -.15;
+    forwardSpeed = -0.15;
   } else if (evt.key === "q") {
-    straffeSpeed = -.075;
+    straffeSpeed = -0.075;
   } else if (evt.key === "d") {
-    straffeSpeed = .075;
+    straffeSpeed = 0.075;
   }
 }
 
@@ -152,13 +171,20 @@ function keyUpped(evt) {
 }
 
 function moveCamera() {
-  camera.position.x = (camera.position.x) + (Math.cos(camera.rotation.y) * straffeSpeed) - (Math.sin(camera.rotation.y) * forwardSpeed);
-  camera.position.z = (camera.position.z) + (-Math.sin(camera.rotation.y) * straffeSpeed) - (Math.cos(camera.rotation.y) * forwardSpeed);
+  camera.position.x =
+    camera.position.x +
+    Math.cos(camera.rotation.y) * straffeSpeed -
+    Math.sin(camera.rotation.y) * forwardSpeed;
+  camera.position.z =
+    camera.position.z +
+    -Math.sin(camera.rotation.y) * straffeSpeed -
+    Math.cos(camera.rotation.y) * forwardSpeed;
 }
 
 function lockMouse() {
-  context.requestPointerLock = context.requestPointerLock ||
+  context.requestPointerLock =
+    context.requestPointerLock ||
     context.mozRequestPointerLock ||
     context.webkitPointerLockElement;
-  context.requestPointerLock()
+  context.requestPointerLock();
 }
