@@ -30,7 +30,7 @@ function loadModels() {
       ++numLoadedModels;
       if (numLoadedModels === MODELS.length) {
         document.getElementById('loader').style.display = "none";
-        animate();
+        setupScene();
       }
     });
   }
@@ -41,7 +41,6 @@ function loadGltfModel(model, onLoaded) {
   var modelName = "models/" + model + ".gltf";
   loader.load(modelName, function (gltf) {
     var scene = gltf.scene;
-    model.animations = gltf.animations;
     model.scene = scene;
 
     gltf.scene.traverse(function (object) {
@@ -112,6 +111,10 @@ function initScene() {
   light.shadow.camera.far = 1000;
   light.shadow.bias = -0.005;
   light.shadow.radius = 1;
+}
+
+function setupScene() {
+  animate();
 }
 
 function onWindowResize() {
