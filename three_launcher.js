@@ -13,9 +13,9 @@ let forwardSpeed = 0,
   straffeSpeed = 0;
 
 let MODELS = [
-  { name: "lod_concrete_cube/concrete_cube_high" },
-  { name: "lod_concrete_cube/concrete_cube_medium" },
-  { name: "lod_concrete_cube/concrete_cube_low" },
+  { name: "lod_corridor/corridor_high" },
+  { name: "lod_corridor/corridor_medium" },
+  { name: "lod_corridor/corridor_low" },
 ];
 
 let numLoadedModels = 0;
@@ -51,6 +51,7 @@ function loadGltfModel(model, onLoaded) {
 
       gltf.scene.traverse(function (object) {
         if (object.isMesh) {
+          console.log(object);
           object.castShadow = true;
           object.receiveShadow = true;
         } else if (object.isLight) {
@@ -109,7 +110,7 @@ function initScene() {
 
   worldScene = new THREE.Scene();
   worldScene.background = new THREE.Color(000000);
-  // worldScene.fog = new THREE.Fog(000000, 10, 22);
+  worldScene.fog = new THREE.Fog(000000, 10, 30);
 
   const hlight = new THREE.AmbientLight(0xffffff, 0.05);
   worldScene.add(hlight);
@@ -132,13 +133,15 @@ function setupScene() {
   let lod = new THREE.LOD();
   for (let i = 0; i < 3; i++) {
     const mesh = MODELS[i].scene;
-    lod.addLevel(mesh, Math.pow(i, 2) * 15);
+    lod.addLevel(mesh, Math.pow(i, 2) * 5);
   }
-  for (let j = 0; j < 10; j++) {
-    for (let i = 0; i < 3; i++) {
+  for (let j = 0; j < 20; j++) {
+    const turn = Math.round(Math.random());
+    for (let i = 0; i < 10; i++) {
       let lodClone = lod.clone();
-      lodClone.position.y = i * 2;
-      lodClone.position.x = j * 2;
+      lodClone.position.y = i * 4;
+      lodClone.position.z = j * 4;
+      lodClone.rotation.y = turn * Math.PI;
       worldScene.add(lodClone);
     }
   }
